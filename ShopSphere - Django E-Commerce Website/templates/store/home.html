@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ShopSphere — Premium E-Commerce{% endblock %}
+{% block meta_description %}Discover thousands of premium products at ShopSphere. Free shipping on orders over $100.{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════════
+     HERO SECTION
+     ══════════════════════════════════════════════ -->
+<section class="hero-section">
+  <div class="hero-bg-orb hero-bg-orb-1"></div>
+  <div class="hero-bg-orb hero-bg-orb-2"></div>
+
+  <div class="container position-relative" style="z-index:1;">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="section-badge animate-in">
+          <i class="bi bi-stars"></i> Premium Shopping Experience
+        </div>
+        <h1 class="hero-title animate-in animate-in-delay-1">
+          Shop the <span class="gradient-text">Future</span><br>
+          of Retail
+        </h1>
+        <p class="hero-subtitle animate-in animate-in-delay-2">
+          Discover thousands of curated products from top brands. Premium quality, unbeatable prices, and lightning-fast delivery.
+        </p>
+        <div class="d-flex gap-3 flex-wrap animate-in animate-in-delay-3">
+          <a href="{% url 'store:shop' %}" class="btn-primary-glow">
+            <i class="bi bi-bag-heart"></i> Shop Now
+          </a>
+          <a href="{% url 'store:shop' %}?sort=featured" class="btn-outline-glow">
+            <i class="bi bi-stars"></i> Featured Items
+          </a>
+        </div>
+
+        <div class="hero-stats animate-in">
+          <div class="hero-stat-item">
+            <div class="hero-stat-num">10K+</div>
+            <div class="hero-stat-label">Products</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-num">50K+</div>
+            <div class="hero-stat-label">Happy Customers</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-num">4.9★</div>
+            <div class="hero-stat-label">Avg Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="hero-image-wrapper">
+          <!-- Floating feature cards -->
+          <div class="glass" style="position:absolute;top:20px;left:-20px;padding:.75rem 1.1rem;border-radius:14px;z-index:2;animation:float 5s ease-in-out infinite;display:flex;align-items:center;gap:.6rem;">
+            <span style="font-size:1.4rem;">🚀</span>
+            <div>
+              <div style="font-size:.75rem;font-weight:700;color:var(--text);">Fast Delivery</div>
+              <div style="font-size:.68rem;color:var(--text-muted);">2-3 business days</div>
+            </div>
+          </div>
+
+          <div class="glass" style="position:absolute;bottom:30px;right:-10px;padding:.75rem 1.1rem;border-radius:14px;z-index:2;animation:float 7s ease-in-out infinite reverse;display:flex;align-items:center;gap:.6rem;">
+            <span style="font-size:1.4rem;">🔒</span>
+            <div>
+              <div style="font-size:.75rem;font-weight:700;color:var(--text);">Secure Payment</div>
+              <div style="font-size:.68rem;color:var(--text-muted);">256-bit encryption</div>
+            </div>
+          </div>
+
+          <div style="background:linear-gradient(135deg,var(--surface),var(--surface-2));border-radius:var(--radius-xl);border:1px solid var(--border-light);overflow:hidden;aspect-ratio:1;max-width:480px;margin:auto;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg),var(--shadow-glow);">
+            <div style="text-align:center;padding:3rem;">
+              <div style="font-size:5rem;margin-bottom:1rem;">🛍️</div>
+              <div style="font-family:var(--font-heading);font-size:1.5rem;font-weight:700;color:var(--text);">Your Next<br>Favourite Store</div>
+              <div style="color:var(--text-muted);margin-top:.5rem;font-size:.9rem;">Premium products, curated for you</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     FEATURE STRIPS
+     ══════════════════════════════════════════════ -->
+<section class="py-4" style="background:var(--dark-2);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);">
+  <div class="container">
+    <div class="row g-3 text-center">
+      {% for icon, title, subtitle in features %}
+      <div class="col-6 col-md-3">
+        <div class="d-flex align-items-center gap-2 justify-content-center">
+          <span style="font-size:1.4rem;">{{ icon }}</span>
+          <div style="text-align:left;">
+            <div style="font-size:.85rem;font-weight:600;color:var(--text);">{{ title }}</div>
+            <div style="font-size:.75rem;color:var(--text-muted);">{{ subtitle }}</div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-6 col-md-3">
+        <div class="d-flex align-items-center gap-2 justify-content-center">
+          <span style="font-size:1.4rem;">🚚</span>
+          <div style="text-align:left;">
+            <div style="font-size:.85rem;font-weight:600;color:var(--text);">Free Shipping</div>
+            <div style="font-size:.75rem;color:var(--text-muted);">Orders over $100</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="d-flex align-items-center gap-2 justify-content-center">
+          <span style="font-size:1.4rem;">🔄</span>
+          <div style="text-align:left;">
+            <div style="font-size:.85rem;font-weight:600;color:var(--text);">Easy Returns</div>
+            <div style="font-size:.75rem;color:var(--text-muted);">30-day policy</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="d-flex align-items-center gap-2 justify-content-center">
+          <span style="font-size:1.4rem;">🔒</span>
+          <div style="text-align:left;">
+            <div style="font-size:.85rem;font-weight:600;color:var(--text);">Secure Pay</div>
+            <div style="font-size:.75rem;color:var(--text-muted);">Stripe encrypted</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="d-flex align-items-center gap-2 justify-content-center">
+          <span style="font-size:1.4rem;">💬</span>
+          <div style="text-align:left;">
+            <div style="font-size:.85rem;font-weight:600;color:var(--text);">24/7 Support</div>
+            <div style="font-size:.75rem;color:var(--text-muted);">Always here for you</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     FEATURED PRODUCTS
+     ══════════════════════════════════════════════ -->
+{% if featured_products %}
+<section class="py-5 mt-2">
+  <div class="container">
+    <div class="section-header d-flex align-items-end justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="section-badge"><i class="bi bi-lightning-fill"></i> Hot Picks</div>
+        <h2 class="section-title">Featured Products</h2>
+        <p class="section-subtitle">Handpicked items our customers love most</p>
+      </div>
+      <a href="{% url 'store:shop' %}?sort=featured" class="btn-ghost">
+        View All <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for product in featured_products %}
+      <div class="col-6 col-md-4 col-lg-3" data-animate>
+        {% include 'store/partials/product_card.html' with product=product %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════════════════════════════════
+     CATEGORIES
+     ══════════════════════════════════════════════ -->
+{% if categories %}
+<section class="py-5" style="background:var(--dark-2);">
+  <div class="container">
+    <div class="section-header text-center">
+      <div class="section-badge"><i class="bi bi-grid-3x3-gap"></i> Collections</div>
+      <h2 class="section-title">Shop by Category</h2>
+      <p class="section-subtitle mx-auto">Browse our curated collections and find exactly what you're looking for</p>
+    </div>
+
+    <div class="row g-4">
+      {% for category in categories %}
+      <div class="col-6 col-md-4 col-lg-2" data-animate>
+        <a href="{{ category.get_absolute_url }}" class="category-card">
+          {% if category.image %}
+            <img src="{{ category.image.url }}" class="category-card-img" alt="{{ category.name }}">
+          {% else %}
+            <div class="category-card-img d-flex align-items-center justify-content-center" style="background:var(--surface-2);font-size:3rem;">🏷️</div>
+          {% endif %}
+          <div class="category-card-body">
+            <div class="category-card-name">{{ category.name }}</div>
+            <div class="category-card-count">{{ category.get_products_count }} products</div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════════════════════════════════
+     LATEST PRODUCTS
+     ══════════════════════════════════════════════ -->
+{% if latest_products %}
+<section class="py-5">
+  <div class="container">
+    <div class="section-header d-flex align-items-end justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="section-badge"><i class="bi bi-clock"></i> Just Arrived</div>
+        <h2 class="section-title">New Arrivals</h2>
+        <p class="section-subtitle">Fresh products added to our collection</p>
+      </div>
+      <a href="{% url 'store:shop' %}?sort=newest" class="btn-ghost">
+        View All <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for product in latest_products %}
+      <div class="col-6 col-md-4 col-lg-3" data-animate>
+        {% include 'store/partials/product_card.html' with product=product %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════════════════════════════════
+     CTA BANNER
+     ══════════════════════════════════════════════ -->
+<section class="py-5" style="background:linear-gradient(135deg,var(--dark-2),var(--dark-3));">
+  <div class="container">
+    <div class="glass" style="padding:3rem 2rem;text-align:center;border-radius:var(--radius-xl);">
+      <div style="font-size:3rem;margin-bottom:1rem;">🎁</div>
+      <h2 style="font-family:var(--font-heading);font-size:2rem;font-weight:800;margin-bottom:.75rem;">
+        Get <span class="gradient-text">10% Off</span> Your First Order
+      </h2>
+      <p style="color:var(--text-muted);max-width:400px;margin:0 auto 1.5rem;">
+        Sign up today and use code <strong style="color:var(--primary-light);">WELCOME10</strong> at checkout.
+      </p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        {% if not user.is_authenticated %}
+        <a href="{% url 'accounts:register' %}" class="btn-primary-glow">
+          <i class="bi bi-person-plus"></i> Create Account
+        </a>
+        {% endif %}
+        <a href="{% url 'store:shop' %}" class="btn-outline-glow">
+          <i class="bi bi-bag"></i> Start Shopping
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

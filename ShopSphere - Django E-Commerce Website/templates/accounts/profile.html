@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile — ShopSphere{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+
+    <!-- Sidebar -->
+    <div class="col-lg-3">
+      <div class="ss-card text-center mb-3">
+        <div class="profile-avatar-wrapper mx-auto mb-3" style="display:inline-block;">
+          {% if profile.avatar %}
+          <img src="{{ profile.avatar.url }}" class="profile-avatar" alt="Avatar">
+          {% else %}
+          <div class="profile-avatar d-flex align-items-center justify-content-center" style="font-size:2.5rem;background:var(--surface-2);">
+            {{ user.first_name|first|upper|default:user.username|first|upper }}
+          </div>
+          {% endif %}
+          <div class="profile-avatar-badge"><i class="bi bi-pencil-fill" style="font-size:.6rem;"></i></div>
+        </div>
+        <div style="font-family:var(--font-heading);font-weight:700;font-size:1.1rem;">
+          {{ user.get_full_name|default:user.username }}
+        </div>
+        <div style="color:var(--text-muted);font-size:.8rem;">{{ user.email }}</div>
+        <div style="color:var(--text-muted);font-size:.75rem;margin-top:.25rem;">Member since {{ user.date_joined|date:"M Y" }}</div>
+      </div>
+
+      <!-- Nav links -->
+      <div class="ss-card">
+        <ul class="list-unstyled m-0">
+          {% for href, icon, label in profile_nav %}
+          <li>
+            <a href="{{ href }}" class="d-flex align-items-center gap-2 p-2 rounded"
+               style="color:var(--text-muted);font-size:.875rem;text-decoration:none;transition:all .15s;">
+              <i class="bi bi-{{ icon }}"></i> {{ label }}
+            </a>
+          </li>
+          {% empty %}
+          <li><a href="{% url 'accounts:profile' %}" class="d-flex align-items-center gap-2 p-2 rounded" style="color:var(--primary-light);font-size:.875rem;text-decoration:none;"><i class="bi bi-person-circle"></i> Profile</a></li>
+          <li><a href="{% url 'orders:order_list' %}" class="d-flex align-items-center gap-2 p-2 rounded" style="color:var(--text-muted);font-size:.875rem;text-decoration:none;"><i class="bi bi-bag-check"></i> My Orders</a></li>
+          <li><a href="{% url 'accounts:addresses' %}" class="d-flex align-items-center gap-2 p-2 rounded" style="color:var(--text-muted);font-size:.875rem;text-decoration:none;"><i class="bi bi-geo-alt"></i> Addresses</a></li>
+          <li><a href="{% url 'cart:wishlist' %}" class="d-flex align-items-center gap-2 p-2 rounded" style="color:var(--text-muted);font-size:.875rem;text-decoration:none;"><i class="bi bi-heart"></i> Wishlist</a></li>
+          <li><a href="{% url 'accounts:change_password' %}" class="d-flex align-items-center gap-2 p-2 rounded" style="color:var(--text-muted);font-size:.875rem;text-decoration:none;"><i class="bi bi-shield-lock"></i> Change Password</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="col-lg-9">
+      <div class="ss-card">
+        <div class="ss-card-header">Edit Profile</div>
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">First Name</label>
+              {{ form.first_name }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Last Name</label>
+              {{ form.last_name }}
+            </div>
+            <div class="col-12">
+              <label class="form-label">Email</label>
+              {{ form.email }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone Number</label>
+              {{ form.phone_number }}
+            </div>
+            <div class="col-12">
+              <label class="form-label">Bio</label>
+              {{ form.bio }}
+            </div>
+            <div class="col-12">
+              <label class="form-label">Profile Picture</label>
+              {{ form.avatar }}
+            </div>
+          </div>
+          <button type="submit" class="btn-primary-glow mt-4">
+            <i class="bi bi-check2"></i> Save Changes
+          </button>
+        </form>
+      </div>
+
+      <!-- Recent orders -->
+      {% if orders %}
+      <div class="ss-card mt-4">
+        <div class="ss-card-header">Recent Orders</div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order #</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td style="font-weight:600;color:var(--primary-light);">{{ order.order_number }}</td>
+                <td style="color:var(--text-muted);font-size:.85rem;">{{ order.created_at|date:"M d, Y" }}</td>
+                <td style="color:var(--text-muted);font-size:.85rem;">{{ order.items.count }} item{{ order.items.count|pluralize }}</td>
+                <td style="font-weight:600;">${{ order.total_amount }}</td>
+                <td><span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                <td>
+                  <a href="{% url 'orders:order_detail' order.order_number %}" class="btn-ghost" style="padding:.3rem .7rem;font-size:.8rem;">
+                    View <i class="bi bi-arrow-right"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <a href="{% url 'orders:order_list' %}" class="btn-ghost mt-2">View All Orders <i class="bi bi-arrow-right"></i></a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

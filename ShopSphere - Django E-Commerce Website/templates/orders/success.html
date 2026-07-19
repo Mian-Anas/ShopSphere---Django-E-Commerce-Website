@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed — ShopSphere{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:700px;">
+  <div class="ss-card animate-in text-center">
+    <div style="width:80px;height:80px;background:rgba(67,233,123,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1.5rem;border:2px solid rgba(67,233,123,.3);">
+      ✅
+    </div>
+    <h1 style="font-size:2rem;font-weight:800;margin-bottom:.5rem;">Order Confirmed!</h1>
+    <p style="color:var(--text-muted);margin-bottom:.25rem;">Thank you for your purchase, <strong style="color:var(--text);">{{ order.user.first_name|default:order.user.username }}</strong>!</p>
+    <p style="color:var(--primary-light);font-weight:600;font-size:1.1rem;">{{ order.order_number }}</p>
+  </div>
+
+  <div class="ss-card mt-4">
+    <!-- Order Stepper -->
+    <div class="ss-card-header">Order Status</div>
+    <div class="order-stepper">
+      {% with step=order.get_progress_step %}
+      <div class="step {% if step >= 1 %}completed{% elif step == 1 %}current{% endif %}">
+        <div class="step-circle"><i class="bi bi-bag-check"></i></div>
+        <div class="step-label">Ordered</div>
+      </div>
+      <div class="step {% if step >= 2 %}completed{% elif step == 2 %}current{% endif %}">
+        <div class="step-circle"><i class="bi bi-credit-card"></i></div>
+        <div class="step-label">Paid</div>
+      </div>
+      <div class="step {% if step >= 3 %}completed{% elif step == 3 %}current{% endif %}">
+        <div class="step-circle"><i class="bi bi-truck"></i></div>
+        <div class="step-label">Shipped</div>
+      </div>
+      <div class="step {% if step >= 4 %}completed{% elif step == 4 %}current{% endif %}">
+        <div class="step-circle"><i class="bi bi-house-check"></i></div>
+        <div class="step-label">Delivered</div>
+      </div>
+      {% endwith %}
+    </div>
+  </div>
+
+  <!-- Order Details -->
+  <div class="ss-card mt-4">
+    <div class="ss-card-header">Order Details</div>
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div style="font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem;">Ship To</div>
+        <div style="font-size:.9rem;line-height:1.7;">
+          {{ order.shipping_full_name }}<br>
+          {{ order.shipping_address_line1 }}<br>
+          {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}<br>
+          {{ order.shipping_country }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div style="font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem;">Summary</div>
+        <div style="font-size:.875rem;">
+          <div class="d-flex justify-content-between"><span style="color:var(--text-muted);">Subtotal</span><span>${{ order.subtotal }}</span></div>
+          <div class="d-flex justify-content-between"><span style="color:var(--text-muted);">Shipping</span><span>${{ order.shipping_cost }}</span></div>
+          <div class="d-flex justify-content-between"><span style="color:var(--text-muted);">Tax</span><span>${{ order.tax_amount }}</span></div>
+          {% if order.discount_amount > 0 %}
+          <div class="d-flex justify-content-between"><span style="color:#43e97b;">Discount</span><span style="color:#43e97b;">-${{ order.discount_amount }}</span></div>
+          {% endif %}
+          <div class="d-flex justify-content-between mt-2" style="font-weight:700;font-size:1rem;border-top:1px solid var(--border-light);padding-top:.5rem;">
+            <span>Total</span><span class="gradient-text">${{ order.total_amount }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items -->
+    {% for item in order.items.all %}
+    <div class="d-flex align-items-center gap-3 py-2 {% if not forloop.last %}border-bottom{% endif %}" style="border-color:var(--border-light)!important;">
+      <div style="font-size:.875rem;font-weight:500;flex-grow:1;">{{ item.product_name }}</div>
+      <div style="color:var(--text-muted);font-size:.85rem;">×{{ item.quantity }}</div>
+      <div style="font-weight:600;font-size:.9rem;">${{ item.get_total_price }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="d-flex gap-3 mt-4 justify-content-center flex-wrap">
+    <a href="{% url 'orders:order_detail' order.order_number %}" class="btn-primary-glow">
+      <i class="bi bi-eye"></i> Track Order
+    </a>
+    <a href="{% url 'orders:invoice' order.order_number %}" class="btn-ghost">
+      <i class="bi bi-file-pdf"></i> Download Invoice
+    </a>
+    <a href="{% url 'store:shop' %}" class="btn-ghost">
+      <i class="bi bi-bag-heart"></i> Continue Shopping
+    </a>
+  </div>
+</div>
+{% endblock %}

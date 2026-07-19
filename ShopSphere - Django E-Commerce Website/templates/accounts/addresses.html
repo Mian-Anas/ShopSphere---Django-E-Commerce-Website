@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}My Addresses — ShopSphere{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 style="font-size:1.75rem;font-weight:800;"><i class="bi bi-geo-alt me-2"></i>My Addresses</h1>
+    <a href="{% url 'accounts:address_add' %}" class="btn-primary-glow">
+      <i class="bi bi-plus-lg"></i> Add Address
+    </a>
+  </div>
+
+  {% if addresses %}
+  <div class="row g-4">
+    {% for address in addresses %}
+    <div class="col-md-6">
+      <div class="ss-card h-100" style="position:relative;">
+        {% if address.is_default %}
+        <span class="status-badge status-delivered" style="position:absolute;top:1rem;right:1rem;">Default</span>
+        {% endif %}
+        <div style="font-size:.75rem;font-weight:700;color:var(--primary-light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5rem;">
+          {{ address.get_address_type_display }} Address
+        </div>
+        <div style="font-weight:700;margin-bottom:.25rem;">{{ address.full_name }}</div>
+        <div style="color:var(--text-muted);font-size:.875rem;line-height:1.7;">
+          {{ address.address_line1 }}<br>
+          {% if address.address_line2 %}{{ address.address_line2 }}<br>{% endif %}
+          {{ address.city }}, {{ address.state }} {{ address.postal_code }}<br>
+          {{ address.country }}
+          {% if address.phone %}<br><i class="bi bi-telephone me-1"></i>{{ address.phone }}{% endif %}
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <a href="{% url 'accounts:address_edit' address.pk %}" class="btn-ghost" style="font-size:.8rem;padding:.35rem .8rem;">
+            <i class="bi bi-pencil"></i> Edit
+          </a>
+          <form method="post" action="{% url 'accounts:address_delete' address.pk %}" onsubmit="return confirm('Delete this address?');">
+            {% csrf_token %}
+            <button type="submit" class="btn-ghost" style="font-size:.8rem;padding:.35rem .8rem;color:var(--secondary);">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">📍</div>
+    <div class="empty-state-title">No Addresses Yet</div>
+    <p>Add a shipping or billing address to speed up checkout.</p>
+    <a href="{% url 'accounts:address_add' %}" class="btn-primary-glow mt-3">
+      <i class="bi bi-plus-lg"></i> Add Your First Address
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Payment Cancelled — ShopSphere{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:560px;">
+  <div class="ss-card animate-in text-center">
+    <div style="width:80px;height:80px;background:rgba(255,101,132,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1.5rem;border:2px solid rgba(255,101,132,.3);">
+      ❌
+    </div>
+    <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:.5rem;">Payment Cancelled</h1>
+    <p style="color:var(--text-muted);margin-bottom:1.5rem;">
+      Your payment was not completed. No charge has been made to your account.
+      {% if order %} Your order <strong style="color:var(--primary-light);">{{ order.order_number }}</strong> is still pending.{% endif %}
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="{% url 'orders:checkout' %}" class="btn-primary-glow">
+        <i class="bi bi-arrow-clockwise"></i> Try Again
+      </a>
+      <a href="{% url 'cart:cart' %}" class="btn-ghost">
+        <i class="bi bi-bag"></i> Back to Cart
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

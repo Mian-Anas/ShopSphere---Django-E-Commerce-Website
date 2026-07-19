@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Not Found — ShopSphere{% endblock %}
+{% block meta_description %}The page you're looking for doesn't exist or has been moved.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="empty-state" style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+    <div style="font-size:6rem;margin-bottom:1rem;opacity:.7;">🔍</div>
+    <h1 style="font-family:var(--font-heading);font-size:4rem;font-weight:800;margin-bottom:.5rem;">
+      <span class="gradient-text">404</span>
+    </h1>
+    <div class="empty-state-title" style="font-size:1.3rem;">Page Not Found</div>
+    <p style="color:var(--text-muted);max-width:400px;text-align:center;margin:1rem 0 2rem;">
+      The page you're looking for doesn't exist or has been moved. Let's get you back on track.
+    </p>
+    <div class="d-flex gap-3 flex-wrap justify-content-center">
+      <a href="{% url 'store:home' %}" class="btn-primary-glow">
+        <i class="bi bi-house"></i> Go Home
+      </a>
+      <a href="{% url 'store:shop' %}" class="btn-outline-glow">
+        <i class="bi bi-bag"></i> Browse Shop
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

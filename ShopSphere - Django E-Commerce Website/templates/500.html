@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Error — ShopSphere</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f0e17;
+      color: #e8e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(108,99,255,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(255,101,132,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .icon { font-size: 5rem; margin-bottom: 1rem; opacity: .7; }
+    .code {
+      font-family: 'Outfit', sans-serif;
+      font-size: 5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6c63ff, #ff6584);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .5rem;
+    }
+    h1 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+    p { color: #9898b8; max-width: 400px; margin: 0 auto 2rem; line-height: 1.7; }
+    .actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.5rem; border-radius: 12px; font-weight: 600;
+      font-size: .9rem; text-decoration: none; transition: all .3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6c63ff, #5a52d9);
+      color: #fff; border: none;
+      box-shadow: 0 4px 20px rgba(108,99,255,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,99,255,0.5); }
+    .btn-outline {
+      background: transparent; color: #e8e8f0;
+      border: 1px solid rgba(108,99,255,0.3); cursor: pointer;
+    }
+    .btn-outline:hover { border-color: #6c63ff; background: rgba(108,99,255,0.1); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">⚙️</div>
+    <div class="code">500</div>
+    <h1>Server Error</h1>
+    <p>Something went wrong on our end. Our team has been notified and we're working to fix it. Please try again shortly.</p>
+    <div class="actions">
+      <a href="/" class="btn btn-primary">🏠 Go Home</a>
+      <a href="javascript:location.reload();" class="btn btn-outline">🔄 Retry</a>
+    </div>
+  </div>
+</body>
+</html>

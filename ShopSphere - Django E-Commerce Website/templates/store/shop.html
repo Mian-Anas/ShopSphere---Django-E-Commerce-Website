@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shop — ShopSphere{% endblock %}
+{% block meta_description %}Browse thousands of premium products. Filter by category, brand, price range and sort by your preference.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Page header -->
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+    <div>
+      <h1 class="mb-1" style="font-size:1.75rem;font-weight:800;">
+        {% if query %}Search: "{{ query }}"
+        {% elif selected_category %}{{ selected_category.name }}
+        {% elif selected_brand %}{{ selected_brand.name }}
+        {% else %}All Products{% endif %}
+      </h1>
+      <p style="color:var(--text-muted);font-size:.875rem;margin:0;">{{ total_count }} product{{ total_count|pluralize }} found</p>
+    </div>
+
+    <!-- Sort dropdown -->
+    <form method="get" id="sortForm">
+      {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+      {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.slug }}">{% endif %}
+      {% if selected_brand %}<input type="hidden" name="brand" value="{{ selected_brand.slug }}">{% endif %}
+      {% if min_price %}<input type="hidden" name="min_price" value="{{ min_price }}">{% endif %}
+      {% if max_price %}<input type="hidden" name="max_price" value="{{ max_price }}">{% endif %}
+      <select name="sort" class="form-select" style="width:auto;min-width:180px;" onchange="document.getElementById('sortForm').submit();">
+        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest First</option>
+        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+        <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>Name A–Z</option>
+        <option value="featured" {% if sort == 'featured' %}selected{% endif %}>Featured</option>
+      </select>
+    </form>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Sidebar Filters -->
+    <div class="col-lg-3">
+      <div class="shop-sidebar">
+
+        <!-- Search -->
+        <div class="mb-4">
+          <div class="sidebar-title">Search</div>
+          <form method="get">
+            <div class="input-group">
+              <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search products...">
+              <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Categories -->
+        <div class="mb-4">
+          <div class="sidebar-title">Categories</div>
+          <ul class="filter-list">
+            <li class="filter-item">
+              <a href="{% url 'store:shop' %}{% if query %}?q={{ query }}{% endif %}"
+                 class="{% if not selected_category %}active{% endif %}">
+                All Categories
+              </a>
+            </li>
+            {% for cat in categories %}
+            <li class="filter-item">
+              <a href="{{ cat.get_absolute_url }}"
+                 class="{% if selected_category.pk == cat.pk %}active{% endif %}">
+                {{ cat.name }}
+                <span class="filter-count">{{ cat.get_products_count }}</span>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Brands -->
+        {% if brands %}
+        <div class="mb-4">
+          <div class="sidebar-title">Brands</div>
+          <ul class="filter-list">
+            {% for brand in brands %}
+            <li class="filter-item">
+              <a href="{{ brand.get_absolute_url }}"
+                 class="{% if selected_brand.pk == brand.pk %}active{% endif %}">
+                {{ brand.name }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <!-- Price Range -->
+        <div class="mb-4">
+          <div class="sidebar-title">Price Range</div>
+          <form method="get">
+            {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.slug }}">{% endif %}
+            {% if selected_brand %}<input type="hidden" name="brand" value="{{ selected_brand.slug }}">{% endif %}
+            {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+            <div class="price-range-inputs mb-2">
+              <input type="number" name="min_price" class="price-input" placeholder="Min" value="{{ min_price }}" min="0">
+              <span style="color:var(--text-muted);">—</span>
+              <input type="number" name="max_price" class="price-input" placeholder="Max" value="{{ max_price }}" min="0">
+            </div>
+            <button type="submit" class="btn-ghost w-100 justify-content-center">Apply</button>
+          </form>
+        </div>
+
+        <!-- Clear filters -->
+        {% if query or selected_category or selected_brand or min_price or max_price %}
+        <a href="{% url 'store:shop' %}" class="btn-ghost w-100 justify-content-center" style="color:var(--secondary);">
+          <i class="bi bi-x-circle"></i> Clear All Filters
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="col-lg-9">
+      {% if products %}
+      <div class="row g-4">
+        {% for product in products %}
+        <div class="col-6 col-md-4" data-animate>
+          {% include 'store/partials/product_card.html' with product=product %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      {% if page_obj.has_other_pages %}
+      <div class="d-flex justify-content-center mt-5">
+        <nav aria-label="Product pagination">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&sort={{ sort }}&category={{ selected_category.slug }}&min_price={{ min_price }}&max_price={{ max_price }}">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-left"></i></span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+              <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ num }}&q={{ query }}&sort={{ sort }}&category={{ selected_category.slug }}&min_price={{ min_price }}&max_price={{ max_price }}">{{ num }}</a>
+              </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}&sort={{ sort }}&category={{ selected_category.slug }}&min_price={{ min_price }}&max_price={{ max_price }}">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-right"></i></span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+      {% endif %}
+
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-title">No products found</div>
+        <p>Try adjusting your filters or search query.</p>
+        <a href="{% url 'store:shop' %}" class="btn-primary-glow mt-3">
+          <i class="bi bi-arrow-left"></i> Browse All Products
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

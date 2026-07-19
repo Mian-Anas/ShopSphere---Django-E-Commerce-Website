@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}My Cart — ShopSphere{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-4" style="font-size:1.75rem;font-weight:800;"><i class="bi bi-bag me-2"></i>My Cart
+    <span style="font-size:1rem;font-weight:400;color:var(--text-muted);">({{ cart.get_total_items }} item{{ cart.get_total_items|pluralize }})</span>
+  </h1>
+
+  {% if items %}
+  <div class="row g-4" id="cartTable">
+    <!-- Cart Items -->
+    <div class="col-lg-8">
+      <div class="ss-card">
+        {% for item in items %}
+        <div class="d-flex align-items-center gap-3 py-3 {% if not forloop.last %}border-bottom{% endif %}"
+             style="border-color:var(--border-light) !important;"
+             data-cart-item-row="{{ item.pk }}">
+
+          <!-- Image -->
+          <a href="{{ item.product.get_absolute_url }}" style="flex-shrink:0;">
+            {% with img=item.product.get_primary_image %}
+            {% if img %}
+            <img src="{{ img.image.url }}" class="cart-item-img" alt="{{ item.product.name }}">
+            {% else %}
+            <div class="cart-item-img d-flex align-items-center justify-content-center" style="background:var(--surface-2);font-size:1.5rem;">📦</div>
+            {% endif %}
+            {% endwith %}
+          </a>
+
+          <!-- Info -->
+          <div class="flex-grow-1 min-w-0">
+            <a href="{{ item.product.get_absolute_url }}" style="font-weight:600;color:var(--text);text-decoration:none;font-size:.95rem;">
+              {{ item.product.name|truncatechars:50 }}
+            </a>
+            {% if item.product.category %}
+            <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">{{ item.product.category.name }}</div>
+            {% endif %}
+            <div style="color:var(--primary-light);font-weight:700;margin-top:.35rem;">${{ item.get_unit_price }}</div>
+          </div>
+
+          <!-- Qty Controls -->
+          <div class="d-flex align-items-center gap-2" data-cart-item-id="{{ item.pk }}">
+            <div class="qty-stepper d-flex align-items-center gap-1">
+              <button class="qty-btn" data-qty-minus type="button">−</button>
+              <input type="number" class="qty-input" value="{{ item.quantity }}" min="0" max="{{ item.product.stock }}" style="width:46px;height:32px;">
+              <button class="qty-btn" data-qty-plus type="button">+</button>
+            </div>
+          </div>
+
+          <!-- Item Total -->
+          <div style="font-family:var(--font-heading);font-weight:700;font-size:1rem;min-width:70px;text-align:right;"
+               data-item-total="{{ item.pk }}">${{ item.get_total_price }}</div>
+
+          <!-- Remove -->
+          <button class="product-action-btn" data-remove-item="{{ item.pk }}" title="Remove" style="transform:none;opacity:1;">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="d-flex gap-3 mt-3">
+        <a href="{% url 'store:shop' %}" class="btn-ghost">
+          <i class="bi bi-arrow-left"></i> Continue Shopping
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'cart:wishlist' %}" class="btn-ghost">
+          <i class="bi bi-heart"></i> View Wishlist
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Summary Sidebar -->
+    <div class="col-lg-4" id="cartSidebar">
+      <div class="cart-summary">
+        <div class="ss-card-header">Order Summary</div>
+
+        <div class="summary-row">
+          <span style="color:var(--text-muted);">Subtotal</span>
+          <span class="cart-subtotal-display">${{ cart.get_subtotal }}</span>
+        </div>
+        {% if cart.get_subtotal >= 100 %}
+        <div class="summary-row">
+          <span style="color:var(--text-muted);">Shipping</span>
+          <span style="color:#43e97b;">FREE</span>
+        </div>
+        {% else %}
+        <div class="summary-row">
+          <span style="color:var(--text-muted);">Shipping</span>
+          <span>$5.00</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--text-muted);margin-top:-8px;">Add ${{ 100|add:"-"|floatformat:2 }} more for free shipping</div>
+        {% endif %}
+
+        <div class="summary-row total">
+          <span>Estimated Total</span>
+          <span class="gradient-text">
+            ${% if cart.get_subtotal >= 100 %}{{ cart.get_subtotal|floatformat:2 }}{% else %}{{ cart.get_subtotal|add:"5"|floatformat:2 }}{% endif %}
+          </span>
+        </div>
+
+        <a href="{% url 'orders:checkout' %}" class="btn-primary-glow w-100 justify-content-center mt-3">
+          <i class="bi bi-shield-lock-fill"></i> Proceed to Checkout
+        </a>
+
+        <div class="text-center mt-3" style="font-size:.75rem;color:var(--text-muted);">
+          <i class="bi bi-lock-fill me-1"></i>Secured by Stripe · SSL Encrypted
+        </div>
+
+        <!-- Payment Icons -->
+        <div class="d-flex justify-content-center gap-2 mt-3" style="font-size:1.4rem;">
+          💳 🏦 💰
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State (hidden until all items removed) -->
+  <div id="cartEmpty" style="display:none;">
+    <div class="empty-state">
+      <div class="empty-state-icon">🛒</div>
+      <div class="empty-state-title">Your Cart is Empty</div>
+      <p>Looks like you haven't added anything to your cart yet.</p>
+      <a href="{% url 'store:shop' %}" class="btn-primary-glow mt-3">
+        <i class="bi bi-bag-heart"></i> Start Shopping
+      </a>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty-state" id="cartEmpty">
+    <div class="empty-state-icon">🛒</div>
+    <div class="empty-state-title">Your Cart is Empty</div>
+    <p>Looks like you haven't added anything to your cart yet.</p>
+    <a href="{% url 'store:shop' %}" class="btn-primary-glow mt-3">
+      <i class="bi bi-bag-heart"></i> Start Shopping
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

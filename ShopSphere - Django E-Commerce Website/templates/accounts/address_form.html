@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — ShopSphere{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:680px;">
+  <div class="ss-card animate-in">
+    <div class="ss-card-header">
+      <i class="bi bi-geo-alt me-2"></i>{{ title|default:"Address" }}
+    </div>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label">Full Name *</label>
+          {{ form.full_name }}
+          {% if form.full_name.errors %}<div class="invalid-feedback d-block">{{ form.full_name.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Address Type *</label>
+          {{ form.address_type }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Phone</label>
+          {{ form.phone }}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Address Line 1 *</label>
+          {{ form.address_line1 }}
+          {% if form.address_line1.errors %}<div class="invalid-feedback d-block">{{ form.address_line1.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Address Line 2 (Optional)</label>
+          {{ form.address_line2 }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">City *</label>
+          {{ form.city }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">State / Province *</label>
+          {{ form.state }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Postal Code *</label>
+          {{ form.postal_code }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Country *</label>
+          {{ form.country }}
+        </div>
+        <div class="col-12">
+          <div class="form-check">
+            {{ form.is_default }}
+            <label class="form-check-label ms-2" style="font-size:.875rem;">Set as default address</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-3 mt-4">
+        <button type="submit" class="btn-primary-glow">
+          <i class="bi bi-check2"></i> Save Address
+        </button>
+        <a href="{% url 'accounts:addresses' %}" class="btn-ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Dynamic Country, City and State province configuration matching backend data
+  const countryCities = {
+    "United States": {
+      "New York": "New York",
+      "Los Angeles": "California",
+      "Chicago": "Illinois",
+      "Houston": "Texas",
+      "Phoenix": "Arizona",
+      "Philadelphia": "Pennsylvania",
+      "San Antonio": "Texas",
+      "San Diego": "California",
+      "Dallas": "Texas",
+      "San Jose": "California"
+    },
+    "Pakistan": {
+      "Karachi": "Sindh",
+      "Lahore": "Punjab",
+      "Faisalabad": "Punjab",
+      "Rawalpindi": "Punjab",
+      "Gujranwala": "Punjab",
+      "Peshawar": "Khyber Pakhtunkhwa",
+      "Multan": "Punjab",
+      "Islamabad": "Islamabad Capital Territory",
+      "Hyderabad": "Sindh",
+      "Quetta": "Balochistan"
+    },
+    "United Kingdom": {
+      "London": "England",
+      "Birmingham": "England",
+      "Glasgow": "Scotland",
+      "Liverpool": "England",
+      "Bristol": "England",
+      "Manchester": "England",
+      "Sheffield": "England",
+      "Leeds": "England",
+      "Edinburgh": "Scotland",
+      "Leicester": "England"
+    },
+    "Canada": {
+      "Toronto": "Ontario",
+      "Montreal": "Quebec",
+      "Vancouver": "British Columbia",
+      "Calgary": "Alberta",
+      "Edmonton": "Alberta",
+      "Ottawa": "Ontario",
+      "Winnipeg": "Manitoba",
+      "Quebec City": "Quebec",
+      "Hamilton": "Ontario",
+      "Kitchener": "Ontario"
+    },
+    "United Arab Emirates": {
+      "Dubai": "Dubai",
+      "Abu Dhabi": "Abu Dhabi",
+      "Sharjah": "Sharjah",
+      "Al Ain": "Abu Dhabi",
+      "Ajman": "Ajman",
+      "Ras Al Khaimah": "Ras Al Khaimah",
+      "Fujairah": "Fujairah",
+      "Umm Al Quwain": "Umm Al Quwain"
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const countrySel = document.getElementById('id_country');
+    const citySel = document.getElementById('id_city');
+    const stateInput = document.getElementById('id_state');
+
+    // Fetch initial/pre-filled value attributes (e.g. from validation fail or edit mode)
+    const initialCity = "{{ form.city.value|default:'' }}";
+    const initialState = "{{ form.state.value|default:'' }}";
+
+    function populateCities(country, currentCity) {
+      citySel.innerHTML = '<option value="">Select City</option>';
+      
+      if (country && countryCities[country]) {
+        const cities = countryCities[country];
+        for (const city in cities) {
+          const opt = document.createElement('option');
+          opt.value = city;
+          opt.textContent = city;
+          if (city === currentCity) {
+            opt.selected = true;
+            stateInput.value = cities[city];
+          }
+          citySel.appendChild(opt);
+        }
+      }
+    }
+
+    // Bind event change on Country dropdown
+    countrySel.addEventListener('change', function() {
+      populateCities(this.value, '');
+      if (!this.value) {
+        stateInput.value = '';
+      }
+    });
+
+    // Bind event change on City dropdown to auto-fill State
+    citySel.addEventListener('change', function() {
+      const country = countrySel.value;
+      const city = this.value;
+      if (country && city && countryCities[country][city]) {
+        stateInput.value = countryCities[country][city];
+      } else {
+        stateInput.value = '';
+      }
+    });
+
+    // Populate cities dropdown on initial page load if country value is preset
+    if (countrySel.value) {
+      populateCities(countrySel.value, initialCity);
+      if (initialState) {
+        stateInput.value = initialState;
+      }
+    }
+  });
+</script>
+{% endblock %}

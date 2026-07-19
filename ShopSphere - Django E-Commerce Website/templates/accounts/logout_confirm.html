@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Sign Out — ShopSphere{% endblock %}
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5" style="position:relative;z-index:1;">
+  <div class="auth-card animate-in text-center">
+    <div style="font-size:3rem;margin-bottom:1rem;">👋</div>
+    <h1 class="auth-title">Sign Out?</h1>
+    <p class="auth-subtitle">Are you sure you want to sign out of ShopSphere?</p>
+    <div class="d-flex gap-3 justify-content-center">
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary-glow" style="background:linear-gradient(135deg,#ff6584,#ff4766);box-shadow:0 4px 20px rgba(255,101,132,.35);">
+          <i class="bi bi-box-arrow-right"></i> Yes, Sign Out
+        </button>
+      </form>
+      <a href="{% url 'store:home' %}" class="btn-ghost">Cancel</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

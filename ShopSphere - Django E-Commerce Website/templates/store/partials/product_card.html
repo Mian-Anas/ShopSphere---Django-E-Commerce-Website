@@ -1,0 +1,95 @@
+{% load static %}
+<div class="product-card h-100">
+  {% with img=product.get_primary_image %}
+  <div class="product-card-img-wrapper">
+    <a href="{{ product.get_absolute_url }}">
+      {% if img %}
+        <img src="{{ img.image.url }}" class="product-card-img" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+      {% else %}
+        <div class="product-card-img d-flex align-items-center justify-content-center" style="background:var(--surface-2);font-size:3rem;height:100%;">📦</div>
+      {% endif %}
+    </a>
+
+    <!-- Badges -->
+    <div class="product-card-badges">
+      {% if product.get_discount_percentage > 0 %}
+        <span class="badge-discount">-{{ product.get_discount_percentage }}%</span>
+      {% endif %}
+      {% if product.is_featured %}
+        <span class="badge-featured">⭐ Featured</span>
+      {% endif %}
+      {% if not product.is_in_stock %}
+        <span class="badge-out-of-stock">Out of Stock</span>
+      {% endif %}
+    </div>
+
+    <!-- Quick actions -->
+    <div class="product-card-actions">
+      {% if user.is_authenticated %}
+      <button class="product-action-btn {% if product in user_wishlist_ids %}wishlisted{% endif %}"
+              data-toggle-wishlist
+              data-product-id="{{ product.pk }}"
+              title="{% if product in user_wishlist_ids %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
+        {% if product in user_wishlist_ids %}♥{% else %}♡{% endif %}
+      </button>
+      {% else %}
+      <button class="product-action-btn"
+              data-toggle-wishlist
+              data-product-id="{{ product.pk }}"
+              data-requires-auth="true"
+              title="Add to wishlist">♡</button>
+      {% endif %}
+      <a href="{{ product.get_absolute_url }}" class="product-action-btn" title="Quick view">
+        <i class="bi bi-eye"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="product-card-body">
+    {% if product.category %}
+    <div class="product-category">{{ product.category.name }}</div>
+    {% endif %}
+    <a href="{{ product.get_absolute_url }}" style="text-decoration:none;">
+      <h3 class="product-name">{{ product.name }}</h3>
+    </a>
+
+    <!-- Stars -->
+    <div class="product-stars">
+      {% with avg=product.get_average_rating %}
+      {% for i in "12345" %}
+        {% if forloop.counter <= avg %}
+          <span class="star">★</span>
+        {% else %}
+          <span class="star-empty">★</span>
+        {% endif %}
+      {% endfor %}
+      <span class="review-count">({{ product.get_reviews_count }})</span>
+      {% endwith %}
+    </div>
+
+    <!-- Pricing -->
+    <div class="product-pricing">
+      <span class="price-current">${{ product.get_effective_price }}</span>
+      {% if product.discount_price and product.discount_price < product.price %}
+        <span class="price-original">${{ product.price }}</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="product-card-footer">
+    {% if product.is_in_stock %}
+    <button class="btn-add-to-cart"
+            data-add-to-cart
+            data-product-id="{{ product.pk }}"
+            id="add-btn-{{ product.pk }}"
+            type="button">
+      <i class="bi bi-bag-plus"></i> Add to Cart
+    </button>
+    {% else %}
+    <button class="btn-add-to-cart" disabled>
+      <i class="bi bi-x-circle"></i> Out of Stock
+    </button>
+    {% endif %}
+  </div>
+  {% endwith %}
+</div>

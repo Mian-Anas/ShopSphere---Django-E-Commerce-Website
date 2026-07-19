@@ -1,0 +1,58 @@
+# ═══════════════════════════════════════════════════
+# ShopSphere — .gitignore
+# ═══════════════════════════════════════════════════
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/products/*
+media/profiles/*
+media/categories/*
+media/brands/*
+!media/products/.gitkeep
+!media/profiles/.gitkeep
+!media/categories/.gitkeep
+!media/brands/.gitkeep
+
+# Environment
+.env
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+.tox/
+.nox/
+
+# Distribution
+*.tar.gz
+*.whl
